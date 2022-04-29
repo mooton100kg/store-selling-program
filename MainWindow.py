@@ -1,8 +1,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from ServerWindow import Server_Window
-from RestockWindow import Restock_Window
-from SupplierbillWindow import Supplierbill_Window
-from DatabaseWindow import Database_Window
+from Code.ServerWindow import Server_Window
+from Code.RestockWindow import Restock_Window
+from Code.SupplierbillWindow import Supplierbill_Window
+from Code.DatabaseWindow import Database_Window
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):

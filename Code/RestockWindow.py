@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
 import pandas as pd
 from datetime import date
-from main import sell_price_cal, get_Code_Number, save_css_from_code, create_barcode, print_barcode_to_pdf
+from main import sell_price_cal, get_Code_Number, save_css_from_code, create_barcode, print_barcode_to_pdf, sellcode_convert
 
 class Restock_Window(QtWidgets.QMainWindow):
     def __init__(self):
@@ -195,7 +195,8 @@ class Restock_Window(QtWidgets.QMainWindow):
                 Code = get_Code_Number(Name, Supplier, Month, Year)
                 name_list.append(Code)
                 save_css_from_code(Code,Cost,Sellprice,Quantity) #save new data to datase
-                create_barcode(Code,sellcode='jhgffgfrfg') #create barcode
+                sellcode = sellcode_convert(str(Cost),str(Sellprice))
+                create_barcode(Code,sellcode) #create barcode
             
             print_barcode_to_pdf(name_list, quantity_list) #move barcode to pdf file and merge pdf file to one file in bercode folder
             self.input_info = {'Name':[],'Supplier':[],'Cost':[],'Sell price':[],'Month':[],'Year':[],'Quantity':[]}

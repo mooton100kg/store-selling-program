@@ -157,7 +157,7 @@ def get_nsd_from_code(code : str):
 
     return return_data
 
-def sellcode_convert(cost,sell,gen):
+def sellcode_convert(cost:str,sell:str):
     sell_code = ('S','R','Y','Z','M','L','H','G','P','J')
     Cost_code = ('N','E','D','I','X','A','F','O','C','B')
     sc = ''
@@ -169,7 +169,7 @@ def sellcode_convert(cost,sell,gen):
     for i in c:
         cc += Cost_code[i-1]
     
-    code = 'K' + sc + 'W' + cc + gen
+    code = 'K' + sc + 'W' + cc
     return code
 
 def print_barcode_to_pdf(image_name : list, quantity : list):
@@ -242,21 +242,6 @@ def merge_pdf_page(name_list):
     merger.write('barcode/'+ datetime.now().strftime("%d-%m-%Y"+'_'+'%H-%M-%S') +'.pdf')
     merger.close()
 
-def barcode_check_digit(code_digit_check: str):
-    list_code = [int(x) for x in code_digit_check[:-1]]
-    odd = sum(list_code[::2])
-    even = sum(list_code[1::2])*3
-    total = odd+even%10
-
-    if total != 0:
-        check_digit = 10-total
-    elif total == 0:
-        check_digit = 0
-
-    if check_digit == int(code_digit_check[-1]):
-        return True
-    elif check_digit != int(code_digit_check[-1]):
-        return False
 
 def sell(code : list, quantity : list):
     if code and quantity:
