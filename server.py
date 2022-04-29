@@ -1,4 +1,4 @@
-import socket,time
+import socket
 import threading,json
 from main import get_ncss_from_code,update_stock_from_code,total_sell_update
 

@@ -119,11 +119,10 @@ def total_sell_update(All : list):
 def create_barcode(code : str, detail : str = '', sellcode : str = ''):
     #gen barcode with code number
     text = get_nsd_from_code(code)[0]+' '+get_nsd_from_code(code)[1]+' '+sellcode+' '+detail
-    print(text)
     bar =  Code128(code, writer = ImageWriter())
     bar.save('barcode/' + code, {'module_width':0.35, 'module_height':7, 'font_size':10, 'text_distance':1.2})
     bar = Image.open('barcode/' + code + ".png")
-    bar = add_margin(bar,0,0,40,0,(250,250,250))
+    bar = add_margin(bar,0,0,40,0,(255,255,255))
     bar = add_margin(bar,1,1,1,1,(0,0,0))
     draw = ImageDraw.Draw(bar)
     font = ImageFont.truetype("angsana.ttc",35)

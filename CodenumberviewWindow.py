@@ -1,5 +1,4 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from cv2 import FileNode_NAMED
 import pandas as pd
 
 class Codenumberview_Window(QtWidgets.QMainWindow):
