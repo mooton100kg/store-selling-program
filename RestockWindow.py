@@ -215,15 +215,24 @@ class Restock_Window(QtWidgets.QMainWindow):
     def SupplierName_LineEdit_Finish(self):
         Supplier = self.Supplier_LineEdit.text()
         Name = self.Name_LineEdit.text()
+        month = date.today().strftime('%d')
+        year = date.today().strftime('%m')
         if Supplier and Name != '':
-            Code = get_Code_Number(Name,Supplier,'01','22')[:-4]
-            for n,i in enumerate(self.css_file['Code']):
-                if Code == i:
+            if Name in list(self.Part_number['Name']) and Supplier in list(self.Supplier_number['Supplier']):
+                Code = get_Code_Number(Name,Supplier,month,year)[:-4]
+
+                if Code in list(self.css_file['Code']):
+                    n = self.css_file.query(f'Cost == "{Code}"').index[0]
                     Cost = self.css_file['Cost'][n]
                     Sellprice = self.css_file['Sellprice'][n]
                     self.Cost_LineEdit.setText(Cost)
                     self.Sellprice_LineEdit.setText(Sellprice)
                     self.Date_DateEdit.setFocus()
+                elif Code not in list(self.css_file['Code']):
+                    self.Cost_LineEdit.setFocus()
+
+            elif Name not in list(self.Part_number['Name']) or Supplier not in list(self.Supplier_number['Supplier']):
+                self.Cost_LineEdit.setFocus()
         else:
             self.Cost_LineEdit.setFocus()
 

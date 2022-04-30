@@ -1,4 +1,3 @@
-from pickle import FALSE
 import pandas as pd
 from math import ceil
 from barcode import Code128
@@ -255,8 +254,4 @@ def sell(code : list, quantity : list):
         
         css.to_csv('Cost_Sellprice_Stock.csv', index=False, encoding='utf-8')
             
-def main():
-    print(get_Code_Number('เฟืองร้อย','PPD','00','00')[:])
-    pass
-if __name__ == "__main__":
-    main()
+
