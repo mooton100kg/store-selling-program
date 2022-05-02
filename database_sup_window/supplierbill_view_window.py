@@ -13,7 +13,7 @@ class SupplierbillViewWindow(QtWidgets.QMainWindow):
         self.setupUi()
 
     def setupUi(self):
-        self.input_info = pd.read_csv('Supplier_Bill.csv', dtype=str).to_dict('list')
+        self.input_info = pd.read_csv('database/Supplier_Bill.csv', dtype=str).to_dict('list')
         self.filter_dict = self.input_info.copy()
         self.resize(675, 488)
         self.move(20,20)
@@ -205,12 +205,12 @@ class Edit_Window(QtWidgets.QMainWindow):
         Year = D.split('-')[0]
         D = f'{Day}-{Month}-{Year}'
         Totalcost = self.Totalcost_LineEdit.text()
-        df = pd.read_csv('Supplier_Bill.csv', dtype=str)
+        df = pd.read_csv('database/Supplier_Bill.csv', dtype=str)
 
         if (Supplier and Billnum != '') and Totalcost.isnumeric() == True:
             row = df.query(f'Supplier == "{edit_list[0]}" and `Bill num` == "{edit_list[1]}" and `Bill date` == "{edit_list[2]}" and `Total cost` == "{edit_list[3]}" and Month == "{edit_list[4]}" and Year == "{edit_list[5]}"').index
             df.loc[row] = [Supplier,Billnum,D,Totalcost,Month,Year]
-            df.to_csv('Supplier_Bill.csv', index=False,encoding='utf-8')
+            df.to_csv('database/Supplier_Bill.csv', index=False,encoding='utf-8')
     
 
         mainwindow.setupUi()

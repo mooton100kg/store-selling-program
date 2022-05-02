@@ -1,15 +1,15 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtGui, QtWidgets
 import pandas as pd
 from datetime import date,timedelta,datetime
 
 
-class Sellprofit_Window(QtWidgets.QMainWindow):
+class SellprofitWindow(QtWidgets.QMainWindow):
     def __init__(self):
-        super(Sellprofit_Window, self).__init__()
+        super(SellprofitWindow, self).__init__()
         self.font = QtGui.QFont()
         self.font.setPointSize(16)
-        self.input_info = pd.read_csv('Total_sell.csv', dtype=str).to_dict('list')
-        self.df = pd.read_csv('Total_sell.csv', dtype=str)
+        self.input_info = pd.read_csv('database/Total_sell.csv', dtype=str).to_dict('list')
+        self.df = pd.read_csv('database/Total_sell.csv', dtype=str)
         self.setupUi()
 
     def profit_today(self):
@@ -150,11 +150,3 @@ class Sellprofit_Window(QtWidgets.QMainWindow):
         self.Dec_Label.setText(f'ธ.ค. : {p[11]}')
         self.Year_Label.setText(f' : {str(py)}')
 
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication([])
-    window = Sellprofit_Window()
-    window.show()
-    sys.exit(app.exec_())

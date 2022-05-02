@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import pandas as pd
 
-from main import get_nsd_from_code
+from func import get_nsd_from_code
 
 class StockWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -17,8 +17,8 @@ class StockWindow(QtWidgets.QMainWindow):
     def setupinfo(self):
         self.input_info['Name'] = []
         self.input_info['Supplier'] = []
-        self.input_info.update(pd.read_csv('Cost_Sellprice_Stock.csv', dtype=str).to_dict('list'))
-        restock_file = pd.read_csv('Restock_Alert.csv', dtype=str)
+        self.input_info.update(pd.read_csv('database/Cost_Sellprice_Stock.csv', dtype=str).to_dict('list'))
+        restock_file = pd.read_csv('database/Restock_Alert.csv', dtype=str)
         self.input_info['Minimum'] = []
         for c in self.input_info['Code']:
             nsd = get_nsd_from_code(c)
@@ -235,8 +235,8 @@ class Edit_Window(QtWidgets.QMainWindow):
         Sellprice = self.Sellprice_LineEdit.text()
         Stock = self.Stock_LineEdit.text()
         Minimum = self.Minimum_LineEdit.text()
-        css = pd.read_csv('Cost_Sellprice_Stock.csv', dtype=str)
-        ra = pd.read_csv('Restock_Alert.csv', dtype=str)
+        css = pd.read_csv('database/Cost_Sellprice_Stock.csv', dtype=str)
+        ra = pd.read_csv('database/Restock_Alert.csv', dtype=str)
 
         if (Cost.isnumeric() and Sellprice.isnumeric() and Stock.isnumeric() and Minimum.isnumeric() == True):
             row = css.query(f'Code == "{edit_list[2]}" and Cost == "{edit_list[3]}" and Sellprice == "{edit_list[4]}" and Stock == "{edit_list[5]}"').index
@@ -245,8 +245,8 @@ class Edit_Window(QtWidgets.QMainWindow):
             row = ra.query(f'Code == "{edit_list[2]}"').index
             ra.loc[row] = [edit_list[2],Minimum]
 
-            css.to_csv('Cost_Sellprice_Stock.csv', index=False,encoding='utf-8')
-            ra.to_csv('Restock_Alert.csv', index=False,encoding='utf-8')
+            css.to_csv('database/Cost_Sellprice_Stock.csv', index=False,encoding='utf-8')
+            ra.to_csv('database/Restock_Alert.csv', index=False,encoding='utf-8')
     
 
         mainwindow.setupUi()

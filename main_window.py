@@ -1,8 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from ServerWindow import Server_Window
-from RestockWindow import Restock_Window
-from SupplierbillWindow import Supplierbill_Window
-from database_window import Database_Window
+
+from main_sup_window import DatabaseWindow,RestockWindow,ServerWindow,SupplierbillWindow
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -23,14 +21,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self.gridLayout = QtWidgets.QGridLayout(self.gridLayoutWidget)
 
         #run server
-        self.Server_Button = QtWidgets.QPushButton(self.gridLayoutWidget, clicked = lambda : self.openWindow(Server_Window))
+        self.Server_Button = QtWidgets.QPushButton(self.gridLayoutWidget, clicked = lambda : self.openWindow(ServerWindow))
         self.Server_Button.setFont(self.font)
         self.Server_Button.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         self.Server_Button.setText('Run Server')
         self.gridLayout.addWidget(self.Server_Button,0,0,1,1)
 
         #restock
-        self.Restock_Button = QtWidgets.QPushButton(self.gridLayoutWidget, clicked = lambda : self.openWindow(Restock_Window))
+        self.Restock_Button = QtWidgets.QPushButton(self.gridLayoutWidget, clicked = lambda : self.openWindow(RestockWindow))
         self.Restock_Button.setFont(self.font)
         self.Restock_Button.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         self.Restock_Button.setText('Restock')
@@ -38,7 +36,7 @@ class MainWindow(QtWidgets.QMainWindow):
         #------------------------------------------------------------
 
         #supplierbill
-        self.Supplierbill_Button = QtWidgets.QPushButton(self.gridLayoutWidget, clicked = lambda : self.openWindow(Supplierbill_Window))
+        self.Supplierbill_Button = QtWidgets.QPushButton(self.gridLayoutWidget, clicked = lambda : self.openWindow(SupplierbillWindow))
         self.Supplierbill_Button.setFont(self.font)
         self.Supplierbill_Button.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         self.Supplierbill_Button.setText('Supplier bill')
@@ -46,7 +44,7 @@ class MainWindow(QtWidgets.QMainWindow):
         #------------------------------------------------------------
 
         #Database
-        self.Database_Button = QtWidgets.QPushButton(self.gridLayoutWidget, clicked = lambda : self.openWindow(Database_Window))
+        self.Database_Button = QtWidgets.QPushButton(self.gridLayoutWidget, clicked = lambda : self.openWindow(DatabaseWindow))
         self.Database_Button.setFont(self.font)
         self.Database_Button.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         self.Database_Button.setText('Data base')
@@ -59,8 +57,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.version_label.setFont(self.font)
         self.version_label.setText('version : 2.0')
         self.gridLayout.addWidget(self.version_label,4,0,1,1)
-
-
 
 
 

@@ -1,15 +1,15 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-import sys
 import pandas as pd
 from datetime import date
-from main import sell_price_cal, get_Code_Number, save_css_from_code, create_barcode, print_barcode_to_pdf, sellcode_convert
 
-class Restock_Window(QtWidgets.QMainWindow):
+from func import sell_price_cal, get_Code_Number, save_css_from_code, create_barcode, print_barcode_to_pdf, sellcode_convert
+
+class RestockWindow(QtWidgets.QMainWindow):
     def __init__(self):
-        super(Restock_Window, self).__init__()
+        super(RestockWindow, self).__init__()
         self.font = QtGui.QFont()
         self.font.setPointSize(16)
-        self.css_file = pd.read_csv('Cost_Sellprice_Stock.csv', dtype=str)
+        self.css_file = pd.read_csv('database/Cost_Sellprice_Stock.csv', dtype=str)
         self.Part_number = pd.read_csv('Code number/Part number.csv', dtype=str)
         self.Supplier_number = pd.read_csv('Code number/Supplier number.csv', dtype=str)
         self.input_info = {'Name':[],'Supplier':[],'Cost':[],'Sell price':[],'Month':[],'Year':[],'Quantity':[]}
@@ -222,7 +222,7 @@ class Restock_Window(QtWidgets.QMainWindow):
                 Code = get_Code_Number(Name,Supplier,month,year)[:-4]
 
                 if Code in list(self.css_file['Code']):
-                    n = self.css_file.query(f'Cost == "{Code}"').index[0]
+                    n = self.css_file.query(f'Code == "{Code}"').index[0]
                     Cost = self.css_file['Cost'][n]
                     Sellprice = self.css_file['Sellprice'][n]
                     self.Cost_LineEdit.setText(Cost)
@@ -247,9 +247,3 @@ class Restock_Window(QtWidgets.QMainWindow):
             self.Sellprice_LineEdit.setFocus()
 
 
-if __name__ == "__main__":
-    app = QtWidgets.QApplication([])
-    window = Restock_Window()
-    window.show()
-    sys.exit(app.exec_())
-    

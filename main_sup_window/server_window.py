@@ -1,11 +1,12 @@
 import threading
 from PyQt5 import QtCore, QtGui, QtWidgets
-from server import start
 from socket import gethostname,gethostbyname
 
-class Server_Window(QtWidgets.QMainWindow):
+from func import start
+
+class ServerWindow(QtWidgets.QMainWindow):
     def __init__(self):
-        super(Server_Window, self).__init__()
+        super(ServerWindow, self).__init__()
         self.font = QtGui.QFont()
         self.font.setPointSize(16)
         self.setupUi()
@@ -56,13 +57,4 @@ class Server_Window(QtWidgets.QMainWindow):
         
 
 
-
-      
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication([])
-    window = Server_Window()
-    window.show()
-    sys.exit(app.exec_())
     

@@ -1,6 +1,6 @@
 from PyQt5 import QtGui, QtWidgets
 
-from database_sup_window import CodenumberViewWindow,StockWindow,SupplierbillViewWindow
+from database_sup_window import CodenumberViewWindow,StockWindow,SupplierbillViewWindow,SellprofitWindow
 
 class DatabaseWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -42,10 +42,9 @@ class DatabaseWindow(QtWidgets.QMainWindow):
         self.main_gridLayout.addWidget(self.Code_Button, 2, 0, 1, 1)
         #----------------------------------------------------------------
 
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication([])
-    window = DatabaseWindow()
-    window.show()
-    sys.exit(app.exec_())
+        #Sell profit
+        self.Sellprofit_Button = QtWidgets.QPushButton('Sell profit', clicked = lambda : self.openWindow(SellprofitWindow))
+        self.Sellprofit_Button.setFont(self.font)
+        self.Sellprofit_Button.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        self.main_gridLayout.addWidget(self.Sellprofit_Button, 3, 0, 1, 1)
+        #----------------------------------------------------------------

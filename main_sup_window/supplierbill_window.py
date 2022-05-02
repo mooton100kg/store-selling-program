@@ -2,11 +2,12 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
 import pandas as pd
 from datetime import date
-from main import update_bill
 
-class Supplierbill_Window(QtWidgets.QMainWindow):
+from func import update_bill
+
+class SupplierbillWindow(QtWidgets.QMainWindow):
     def __init__(self):
-        super(Supplierbill_Window, self).__init__()
+        super(SupplierbillWindow, self).__init__()
         self.font = QtGui.QFont()
         self.font.setPointSize(16)
         self.Supplier_number = pd.read_csv('Code number/Supplier number.csv', dtype=str)
@@ -170,9 +171,4 @@ class Supplierbill_Window(QtWidgets.QMainWindow):
     
 
 
-if __name__ == "__main__":
-    app = QtWidgets.QApplication([])
-    window = Supplierbill_Window()
-    window.show()
-    sys.exit(app.exec_())
-    
+

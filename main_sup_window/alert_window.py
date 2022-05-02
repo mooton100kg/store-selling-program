@@ -2,9 +2,9 @@ from threading import main_thread
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Alert_Window(QtWidgets.QMainWindow):
+class AlertWindow(QtWidgets.QMainWindow):
     def __init__(self):
-        super(Alert_Window, self).__init__()
+        super(AlertWindow, self).__init__()
         self.resize(675, 488)
         self.font = QtGui.QFont()
         self.font.setPointSize(24)
@@ -50,6 +50,6 @@ def stock_alert(code:str,quantity:int):
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication([])
-    window = Alert_Window()
+    window = AlertWindow()
     window.show()
     sys.exit(app.exec_())

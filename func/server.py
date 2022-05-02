@@ -1,6 +1,7 @@
 import socket
 import threading,json
-from main import get_ncss_from_code,update_stock_from_code,total_sell_update
+
+from func import get_ncss_from_code,update_stock_from_code,total_sell_update
 
 HEADER = 64
 PORT = 5050
@@ -67,7 +68,3 @@ def start():
         thread = threading.Thread(target=handle_client, args=(conn,addr))
         thread.start()
         #+print(f'[Active connection] {threading.active_count() -1}')
-
-def close():
-    server.close()
-    print ("[Server] closed")
