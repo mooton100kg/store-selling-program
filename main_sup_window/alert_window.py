@@ -1,6 +1,6 @@
-from threading import main_thread
+import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+import pandas as pd
 
 class AlertWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -9,9 +9,6 @@ class AlertWindow(QtWidgets.QMainWindow):
         self.font = QtGui.QFont()
         self.font.setPointSize(24)
         self.setupUi()
-        global main_window
-        main_window = self
-
 
     def setupUi(self):
         self.setWindowTitle('Stock Alert')
@@ -22,34 +19,35 @@ class AlertWindow(QtWidgets.QMainWindow):
         #alert list
         self.Alert_Table = QtWidgets.QTableWidget()
         self.Alert_Table.setColumnCount(4)
-        self.Alert_Table.setRowCount(3)
+        self.Alert_Table.setHorizontalHeaderLabels(['Code','Quantity','Check'])
         self.gridLayout.addWidget(self.Alert_Table,0,0,1,1)
 
-        self.bb = QtWidgets.QPushButton('bb')
-        self.bb.clicked.connect(self.clicked)
-        self.gridLayout.addWidget(self.bb, 1,0,1,1)
+        #check stock
+        self.Checkstock_Button = QtWidgets.QPushButton('Check Stock')
+        self.Checkstock_Button.setFont(self.font)
+        self.Checkstock_Button.clicked.connect(self.clicked_checkstock)
+        self.gridLayout.addWidget(self.Checkstock_Button,1,0,1,1) 
 
-    def clicked(self):
-        print(type(self.Alert_Table.rowCount()))
+    def clicked_checkstock(self):
+        css = pd.read_csv('database/Cost_Sellprice_Stock.csv',dtype=str)
+        ra = pd.read_csv('database/Restock_Alert.csv', dtype=str)
+        for r,c in enumerate(list(css['Code'])):
+            print(r,c)
 
     def change(self,code,quantity):
+        self.Alert_Table.setRowCount(self.Alert_Table.rowCount()+1)
+
         c = QtWidgets.QTableWidgetItem(code)
-        self.Alert_Table.setItem(self.Alert_Table.rowCount(),0,c)
+        self.Alert_Table.setItem(self.Alert_Table.rowCount()-1,0,c)
 
         q = QtWidgets.QTableWidgetItem(quantity)
-        self.Alert_Table.setItem(self.Alert_Table.rowCount(),1,q)
+        self.Alert_Table.setItem(self.Alert_Table.rowCount()-1,1,q)
 
-        self.btn_sell = QtWidgets.QPushButton('Edit')
-        #self.btn_sell.clicked.connect(self.handleButtonClicked)
-        self.table.setCellWidget(self.Alert_Table.rowCount(),2,self.btn_sell)
-
-def stock_alert(code:str,quantity:int):
-    main_window.change(code,quantity)
+        self.Archive_Button = QtWidgets.QPushButton('Archive')
+        self.Alert_Table.setCellWidget(self.Alert_Table.rowCount()-1,2,self.Archive_Button)
 
 
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication([])
-    window = AlertWindow()
-    window.show()
-    sys.exit(app.exec_())
+app = QtWidgets.QApplication([])
+window = AlertWindow()
+window.show()
+sys.exit(app.exec_())

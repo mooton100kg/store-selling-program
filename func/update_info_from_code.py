@@ -13,12 +13,8 @@ def update_stock_from_code(Code : list, Quantity : list):
         sellprice = css['Sellprice'][row]
         css.loc[row] = [c[:-4], cost, sellprice, quantity]
 
-        row = ra[ra['Code'] == c[:-4]].index[0]
-        min = int(ra['Minimum'][row])
-        if quantity < min:
-            #from AlertWindow import stock_alert
-            #stock_alert(c[:-4],quantity)
-            pass
+
+
     css.to_csv('database/Cost_Sellprice_Stock.csv', index=False, encoding='utf-8')
 
 def total_sell_update(All : list):

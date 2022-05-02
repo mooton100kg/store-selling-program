@@ -217,4 +217,3 @@ class Edit_Window(QtWidgets.QMainWindow):
         self.close()
 
 
-
