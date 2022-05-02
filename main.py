@@ -57,26 +57,39 @@ def update_bill(Supplier:str,Bill_num:str,Bill_date:str,Total_cost:str,Month:str
     df.to_csv('Supplier_Bill.csv', mode='a', encoding='utf-8', index=False, header=False)
 
 def save_css_from_code(code : str, cost : int, sellprice : int, quantity : int):
-    #save cost, sell price, stock from code to file
+    #save cost, sell price, stock from code to file     +    save restock alert
     css = pd.read_csv('Cost_Sellprice_Stock.csv', dtype = str)
+    ra = pd.read_csv('Restock_Alert.csv', dtype=str)
+
     if code[:-4] in css['Code'].to_list():
-        row = int(css[css['Code'] == code[:-4]].index.values)
+        row = css[css['Code'] == code[:-4]].index[0]
         old_stock = int(css['Stock'][row])
         css.loc[row] = [code[:-4], cost, sellprice, old_stock + quantity]
     elif code[:-4] not in css['Code'].to_list():
         css.loc[len(css['Code'])] = [code[:-4], cost, sellprice, quantity] 
+        ra.loc[len(ra['Minimum'])] = [code[:-4], '1'] 
+        
     css.to_csv('Cost_Sellprice_Stock.csv', index=False, encoding='utf-8')
+    ra.to_csv('Restock_Alert.csv', index=False, encoding='utf-8')
 
 def update_stock_from_code(Code : list, Quantity : list):
     #update already sell item in stock
     css = pd.read_csv('Cost_Sellprice_Stock.csv', dtype = str)
+    ra = pd.read_csv('Restock_Alert.csv', dtype=str)
     for c,q in zip(Code,Quantity):
-        row = int(css[css['Code'] == c[:-4]].index.values)
+        row = int(css[css['Code'] == c[:-4]].index[0])
         old_stock = int(css['Stock'][row])
         quantity = old_stock - int(q)
         cost = css['Cost'][row]
         sellprice = css['Sellprice'][row]
         css.loc[row] = [c[:-4], cost, sellprice, quantity]
+
+        row = ra[ra['Code'] == c[:-4]].index[0]
+        min = int(ra['Minimum'][row])
+        if quantity < min:
+            #from AlertWindow import stock_alert
+            #stock_alert(c[:-4],quantity)
+            pass
     css.to_csv('Cost_Sellprice_Stock.csv', index=False, encoding='utf-8')
 
 
@@ -124,7 +137,7 @@ def create_barcode(code : str, detail : str = '', sellcode : str = ''):
     bar = add_margin(bar,0,0,40,0,(255,255,255))
     bar = add_margin(bar,1,1,1,1,(0,0,0))
     draw = ImageDraw.Draw(bar)
-    font = ImageFont.truetype("angsana.ttc",35)
+    font = ImageFont.truetype("font/angsana.ttc",35)
     W, H = bar.size
     draw.text((W/2, 150),text,(0,0,0),font=font, anchor = 'mm')
     bar.save('barcode/' + code + '.png', quality = 300, subsampling=0)
@@ -254,4 +267,4 @@ def sell(code : list, quantity : list):
         
         css.to_csv('Cost_Sellprice_Stock.csv', index=False, encoding='utf-8')
             
-
+#update_stock_from_code(['000004252522'],['30'])

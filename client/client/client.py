@@ -33,9 +33,6 @@ def send(type,msg,out_data):
     return_data = json.loads(return_data)
     out_data.append(return_data)
 
-#start('192.168.1.25')
-#send('dict',{'m':'mm'},[])
-#send('str ','000000192252',[])
 
 
 

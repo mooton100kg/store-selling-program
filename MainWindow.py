@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from ServerWindow import Server_Window
 from RestockWindow import Restock_Window
 from SupplierbillWindow import Supplierbill_Window
-from DatabaseWindow import Database_Window
+from database_window import Database_Window
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):

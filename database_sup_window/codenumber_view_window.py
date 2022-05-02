@@ -1,9 +1,9 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import pandas as pd
 
-class Codenumberview_Window(QtWidgets.QMainWindow):
+class CodenumberViewWindow(QtWidgets.QMainWindow):
     def __init__(self):
-        super(Codenumberview_Window, self).__init__()
+        super(CodenumberViewWindow, self).__init__()
         self.setWindowTitle('Check Stock Window')
         self.font = QtGui.QFont()
         self.font.setPointSize(12)
@@ -222,9 +222,3 @@ class Edit_Window(QtWidgets.QMainWindow):
         mainwindow.setupUi()
         self.close()
 
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication([])
-    window = Codenumberview_Window()
-    window.show()
-    sys.exit(app.exec_())

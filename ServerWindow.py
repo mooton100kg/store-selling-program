@@ -1,6 +1,5 @@
 import threading
 from PyQt5 import QtCore, QtGui, QtWidgets
-import sys
 from server import start
 from socket import gethostname,gethostbyname
 
@@ -58,9 +57,10 @@ class Server_Window(QtWidgets.QMainWindow):
 
 
 
-        
+      
 
 if __name__ == "__main__":
+    import sys
     app = QtWidgets.QApplication([])
     window = Server_Window()
     window.show()

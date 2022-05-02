@@ -1,20 +1,38 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import pandas as pd
 
+from main import get_nsd_from_code
 
-class Supplierbillview_Window(QtWidgets.QMainWindow):
+class StockWindow(QtWidgets.QMainWindow):
     def __init__(self):
-        super(Supplierbillview_Window, self).__init__()
+        super(StockWindow, self).__init__()
         self.setWindowTitle('Check Stock Window')
         self.font = QtGui.QFont()
         self.font.setPointSize(12)
+        self.input_info = dict()
         self.column_filter_Label = ''
         self.column_num = -1
         self.setupUi()
 
-    def setupUi(self):
-        self.input_info = pd.read_csv('Supplier_Bill.csv', dtype=str).to_dict('list')
+    def setupinfo(self):
+        self.input_info['Name'] = []
+        self.input_info['Supplier'] = []
+        self.input_info.update(pd.read_csv('Cost_Sellprice_Stock.csv', dtype=str).to_dict('list'))
+        restock_file = pd.read_csv('Restock_Alert.csv', dtype=str)
+        self.input_info['Minimum'] = []
+        for c in self.input_info['Code']:
+            nsd = get_nsd_from_code(c)
+            self.input_info['Name'].append(nsd[0])
+            self.input_info['Supplier'].append(nsd[1])
+
+            row = restock_file[restock_file['Code'] == c].index[0]
+            min = restock_file['Minimum'][row]
+            self.input_info['Minimum'].append(min)
+
         self.filter_dict = self.input_info.copy()
+
+    def setupUi(self):
+        self.setupinfo()
         self.resize(675, 488)
         self.move(20,20)
         self.gridLayoutWidget = QtWidgets.QWidget(self)
@@ -25,7 +43,7 @@ class Supplierbillview_Window(QtWidgets.QMainWindow):
         self.Filter_Label = QtWidgets.QLabel('Filter : ')
         self.Filter_Label.setFont(self.font)
         self.Filter_Label.setAlignment(QtCore.Qt.AlignRight)
-        self.Filter_Label.setFixedWidth(130) 
+        self.Filter_Label.setFixedWidth(120) 
         self.main_gridLayout.addWidget(self.Filter_Label,0,0,1,1)
 
         self.Filter_LineEdit = QtWidgets.QLineEdit()
@@ -57,12 +75,11 @@ class Supplierbillview_Window(QtWidgets.QMainWindow):
         self.main_gridLayout.addWidget(self.Edit_Button,2,0,1,3)
         #---------------------------------------------------------------
 
-
-
         #Sort shortcut
         self.Sort_Shortcut = QtWidgets.QShortcut(QtGui.QKeySequence("Ctrl+Shift+S"), self)
         self.Sort_Shortcut.activated.connect(self.sort_table)
         #----------------------------------------------------------------------
+
     def changeselection(self):
         if self.show_input_info.currentColumn() != -1: #-1 is normal value of deselection state of pyqt5
             self.column_num = self.show_input_info.currentColumn()
@@ -73,7 +90,7 @@ class Supplierbillview_Window(QtWidgets.QMainWindow):
     def sort_table(self):
         if self.column_num >= 0:
             self.show_input_info.sortItems(self.column_num, QtCore.Qt.AscendingOrder)
-
+    
     def deselction(self):
         self.show_input_info.clearSelection()
         self.column_num = -2
@@ -82,11 +99,10 @@ class Supplierbillview_Window(QtWidgets.QMainWindow):
         self.Filter_Label.setText(f'{self.column_filter_Label} Filter : ')
 
     def filter(self):
-        
         filter_input = self.Filter_LineEdit.text()
-        if self.column_num == 0: #if column supplier is selected turn user input to uppercase
+        if self.column_num == 1: #if column supplier is selected turn user input to uppercase
             filter_input = filter_input.upper()
-        
+
         if self.column_num >= 0:
             column_name = list(self.input_info.keys())[self.column_num]
             filter_list = []
@@ -101,21 +117,23 @@ class Supplierbillview_Window(QtWidgets.QMainWindow):
                     if n in filter_list:
                         l.append(w)
                 self.filter_dict[k] = l
-           
+
         elif self.column_num < 0: #if no column is selected return un filter table
             self.filter_dict = self.input_info.copy()
+
         self.setdatain_show_input_info()
 
+
+
     def setdatain_show_input_info(self):
-        self.show_input_info.setColumnCount(6)
-        self.show_input_info.setRowCount(len(self.filter_dict['Supplier']))
-        Header = ['Supplier','Bill num','Bill date','Total cost','Month','Year']
+        self.show_input_info.setColumnCount(7)
+        self.show_input_info.setRowCount(len(self.filter_dict['Code']))
+        Header = ['Name','Supplier','Code','Cost','Sell price','Stock','Minimum']
         for n,key in enumerate(self.filter_dict.keys()):
             for m, item in enumerate(self.filter_dict[key]):
                 newitem = QtWidgets.QTableWidgetItem(item)
                 self.show_input_info.setItem(m, n, newitem)
             self.show_input_info.setHorizontalHeaderLabels(Header)
-
 
     def EditWindow(self):
         row_num = self.show_input_info.currentRow()
@@ -125,9 +143,6 @@ class Supplierbillview_Window(QtWidgets.QMainWindow):
         self.sub_window.show()
         global mainwindow
         mainwindow = self
-
-
-
 
 class Edit_Window(QtWidgets.QMainWindow):
     def __init__(self):
@@ -139,87 +154,101 @@ class Edit_Window(QtWidgets.QMainWindow):
 
     def setupUi(self):
         self.resize(400, 200)
-        self.setFixedSize(400,200)
+        self.setFixedSize(400,250)
         self.move(20,20)
         self.gridLayoutWidget = QtWidgets.QWidget(self)
         self.setCentralWidget(self.gridLayoutWidget)
         self.main_gridLayout = QtWidgets.QGridLayout(self.gridLayoutWidget)
 
-        #Supplier 
+        #Name 
+        self.Name_Label = QtWidgets.QLabel('Name : ')
+        self.Name_Label.setFont(self.font)
+        self.main_gridLayout.addWidget(self.Name_Label,0,0,1,1)
+
+        self.Name_LineEdit = QtWidgets.QLineEdit(edit_list[0])
+        self.Name_LineEdit.setFont(self.font)
+        self.Name_LineEdit.setEnabled(False)
+        self.main_gridLayout.addWidget(self.Name_LineEdit,0,1,1,1)
+        #---------------------------------------------------------------
+
+        #Supplier
         self.Supplier_Label = QtWidgets.QLabel('Supplier : ')
         self.Supplier_Label.setFont(self.font)
-        self.main_gridLayout.addWidget(self.Supplier_Label,0,0,1,1)
+        self.main_gridLayout.addWidget(self.Supplier_Label,1,0,1,1)
 
-        self.Supplier_LineEdit = QtWidgets.QLineEdit(edit_list[0])
+        self.Supplier_LineEdit = QtWidgets.QLineEdit(edit_list[1])
         self.Supplier_LineEdit.setFont(self.font)
-        self.main_gridLayout.addWidget(self.Supplier_LineEdit,0,1,1,1)
+        self.Supplier_LineEdit.setEnabled(False)
+        self.main_gridLayout.addWidget(self.Supplier_LineEdit,1,1,1,1)
         #---------------------------------------------------------------
 
-        #Bill num
-        self.Billnum_Label = QtWidgets.QLabel('Bill number : ')
-        self.Billnum_Label.setFont(self.font)
-        self.main_gridLayout.addWidget(self.Billnum_Label,1,0,1,1)
+        #Cost
+        self.Cost_Label = QtWidgets.QLabel('Cost : ')
+        self.Cost_Label.setFont(self.font)
+        self.main_gridLayout.addWidget(self.Cost_Label,2,0,1,1)
 
-        self.Billnum_LineEdit = QtWidgets.QLineEdit(edit_list[1])
-        self.Billnum_LineEdit.setFont(self.font)
-        self.main_gridLayout.addWidget(self.Billnum_LineEdit,1,1,1,1)
+        self.Cost_LineEdit = QtWidgets.QLineEdit(edit_list[3])
+        self.Cost_LineEdit.setFont(self.font)
+        self.main_gridLayout.addWidget(self.Cost_LineEdit,2,1,1,1)
         #---------------------------------------------------------------
 
-        #Bill date
-        self.Date_Label = QtWidgets.QLabel('Date : ')
-        self.Date_Label.setFont(self.font)
-        self.main_gridLayout.addWidget(self.Date_Label,2,0,1,1)
+        #Sell price
+        self.Sellprice_Label = QtWidgets.QLabel('Sell price : ')
+        self.Sellprice_Label.setFont(self.font)
+        self.main_gridLayout.addWidget(self.Sellprice_Label,3,0,1,1)
 
-        self.Date_DateEdit = QtWidgets.QDateEdit()
-        self.Date_DateEdit.setFont(self.font)
-        self.Date_DateEdit.setLocale(QtCore.QLocale(QtCore.QLocale.English, QtCore.QLocale.UnitedStates))
-        self.Date_DateEdit.setDisplayFormat('dd/MM/yyyy')
-        self.Date_DateEdit.setToolTip('mm/yyyy')
-        self.Date_DateEdit.setDate(QtCore.QDate(int(edit_list[5]),int(edit_list[4]),int(edit_list[2].split('-')[0])))
-        self.main_gridLayout.addWidget(self.Date_DateEdit, 2, 1, 1, 1)
-        #-------------------------------------------------------------
+        self.Sellprice_LineEdit = QtWidgets.QLineEdit(edit_list[4])
+        self.Sellprice_LineEdit.setFont(self.font)
+        self.main_gridLayout.addWidget(self.Sellprice_LineEdit,3,1,1,1)
+        #---------------------------------------------------------------
 
-        #Total cost
-        self.Totalcost_Label = QtWidgets.QLabel('Total cost : ')
-        self.Totalcost_Label.setFont(self.font)
-        self.main_gridLayout.addWidget(self.Totalcost_Label,3,0,1,1)
+        #Stock
+        self.Stock_Label = QtWidgets.QLabel('Stock : ')
+        self.Stock_Label.setFont(self.font)
+        self.main_gridLayout.addWidget(self.Stock_Label,4,0,1,1)
 
-        self.Totalcost_LineEdit = QtWidgets.QLineEdit(edit_list[3])
-        self.Totalcost_LineEdit.setFont(self.font)
-        self.main_gridLayout.addWidget(self.Totalcost_LineEdit,3,1,1,1)
+        self.Stock_LineEdit = QtWidgets.QLineEdit(edit_list[5])
+        self.Stock_LineEdit.setFont(self.font)
+        self.main_gridLayout.addWidget(self.Stock_LineEdit,4,1,1,1)
+        #---------------------------------------------------------------
+
+        #minimum
+        self.Minimum_Label = QtWidgets.QLabel('Minimum : ')
+        self.Minimum_Label.setFont(self.font)
+        self.main_gridLayout.addWidget(self.Minimum_Label,5,0,1,1)
+
+        self.Minimum_LineEdit = QtWidgets.QLineEdit(edit_list[6])
+        self.Minimum_LineEdit.setFont(self.font)
+        self.main_gridLayout.addWidget(self.Minimum_LineEdit,5,1,1,1)
         #---------------------------------------------------------------
 
         #apply
         self.Apply_Button = QtWidgets.QPushButton('Apply')
         self.Apply_Button.setFont(self.font)
         self.Apply_Button.clicked.connect(self.clicked_apply)
-        self.main_gridLayout.addWidget(self.Apply_Button,4,1,1,1)
+        self.Apply_Button.setFixedHeight(30)
+        self.main_gridLayout.addWidget(self.Apply_Button,6,1,1,1)
         #---------------------------------------------------------------
 
     def clicked_apply(self):
-        Supplier = self.Supplier_LineEdit.text()
-        Billnum = self.Billnum_LineEdit.text()
-        D = str(self.Date_DateEdit.date().toPyDate())
-        Day = D.split('-')[2]
-        Month = D.split('-')[1]
-        Year = D.split('-')[0]
-        D = f'{Day}-{Month}-{Year}'
-        Totalcost = self.Totalcost_LineEdit.text()
-        df = pd.read_csv('Supplier_Bill.csv', dtype=str)
+        Cost = self.Cost_LineEdit.text()
+        Sellprice = self.Sellprice_LineEdit.text()
+        Stock = self.Stock_LineEdit.text()
+        Minimum = self.Minimum_LineEdit.text()
+        css = pd.read_csv('Cost_Sellprice_Stock.csv', dtype=str)
+        ra = pd.read_csv('Restock_Alert.csv', dtype=str)
 
-        if (Supplier and Billnum != '') and Totalcost.isnumeric() == True:
-            row = df.query(f'Supplier == "{edit_list[0]}" and `Bill num` == "{edit_list[1]}" and `Bill date` == "{edit_list[2]}" and `Total cost` == "{edit_list[3]}" and Month == "{edit_list[4]}" and Year == "{edit_list[5]}"').index
-            df.loc[row] = [Supplier,Billnum,D,Totalcost,Month,Year]
-            df.to_csv('Supplier_Bill.csv', index=False,encoding='utf-8')
+        if (Cost.isnumeric() and Sellprice.isnumeric() and Stock.isnumeric() and Minimum.isnumeric() == True):
+            row = css.query(f'Code == "{edit_list[2]}" and Cost == "{edit_list[3]}" and Sellprice == "{edit_list[4]}" and Stock == "{edit_list[5]}"').index
+            css.loc[row] = [edit_list[2],Cost,Sellprice,Stock]
+
+            row = ra.query(f'Code == "{edit_list[2]}"').index
+            ra.loc[row] = [edit_list[2],Minimum]
+
+            css.to_csv('Cost_Sellprice_Stock.csv', index=False,encoding='utf-8')
+            ra.to_csv('Restock_Alert.csv', index=False,encoding='utf-8')
     
 
         mainwindow.setupUi()
         self.close()
 
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication([])
-    window = Supplierbillview_Window()
-    window.show()
-    sys.exit(app.exec_())
