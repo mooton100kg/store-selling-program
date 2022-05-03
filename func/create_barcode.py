@@ -1,10 +1,11 @@
 from PIL import Image, ImageFont, ImageDraw
 from PyPDF2 import PdfFileMerger
-from os import remove
+from os import remove,startfile
 from barcode import Code128
 from barcode.writer import ImageWriter
 from math import ceil
 from datetime import datetime
+import pathlib
 
 from func import get_nsd_from_code
 
@@ -98,6 +99,9 @@ def merge_pdf_page(name_list):
 
     for pdf in name_list:
         merger.append(pdf)
-
-    merger.write('barcode/'+ datetime.now().strftime("%d-%m-%Y"+'_'+'%H-%M-%S') +'.pdf')
+    file_name = datetime.now().strftime("%d-%m-%Y"+'_'+'%H-%M-%S') +'.pdf'
+    merger.write('barcode/'+ file_name)
+    
+    file_path = str(pathlib.Path().resolve())+'\\barcode'+'\\'+file_name
     merger.close()
+    startfile(file_path)

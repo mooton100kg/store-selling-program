@@ -18,7 +18,7 @@ def update_stock_from_code(Code : list, Quantity : list):
 def total_sell_update(All : list):
     sell = int(All[0])
     cost = int(All[1])
-    ts = pd.read_csv('Total_sell.csv', dtype=str)
+    ts = pd.read_csv('database/Total_sell.csv', dtype=str)
     m_y = date.today().strftime('%m-%y')
     today = date.today().strftime('%d')
     if m_y in ts['month_year'].to_list():

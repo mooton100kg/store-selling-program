@@ -37,7 +37,7 @@ class Client_Window(QtWidgets.QMainWindow):
         #-----------------------------------------------------------------------------------
 
         #all sum
-        self.Allsum_Label = QtWidgets.QLabel('All sum :')
+        self.Allsum_Label = QtWidgets.QLabel('ราคารวม :')
         self.Allsum_Label.setFont(self.font)
         self.main_gridLayout.addWidget(self.Allsum_Label, 1, 0, 1, 1)
 
@@ -49,7 +49,7 @@ class Client_Window(QtWidgets.QMainWindow):
         #----------------------------------------------------------------
 
         #Delete
-        self.Delete_Button = QtWidgets.QPushButton('Delete')
+        self.Delete_Button = QtWidgets.QPushButton('ลบ')
         self.Delete_Button.setFont(self.font)
         self.Delete_Button.setFixedWidth(100)
         self.Delete_Button.clicked.connect(self.clicked_delete)
@@ -58,7 +58,7 @@ class Client_Window(QtWidgets.QMainWindow):
         #----------------------------------------------------
 
         #Confirm
-        self.Confirm_Button = QtWidgets.QPushButton('Confirm')
+        self.Confirm_Button = QtWidgets.QPushButton('ยืนยัน')
         self.Confirm_Button.setFont(self.font)
         self.Confirm_Button.setFixedHeight(50)
         self.Confirm_Button.clicked.connect(self.clicked_confirm)
@@ -72,12 +72,12 @@ class Client_Window(QtWidgets.QMainWindow):
         self.IP_LineEdit.setMinimumWidth(150)
         self.input_gridLayout.addWidget(self.IP_LineEdit, 0, 0, 1, 1)
 
-        self.IP_Button = QtWidgets.QPushButton('Login')
+        self.IP_Button = QtWidgets.QPushButton('เข้าสู่ระบบ')
         self.IP_Button.setFont(self.font)
         self.IP_Button.clicked.connect(self.clicked_login)
         self.input_gridLayout.addWidget(self.IP_Button, 0, 1, 1, 1)
 
-        self.IPlogout_Button = QtWidgets.QPushButton('Logout')
+        self.IPlogout_Button = QtWidgets.QPushButton('ออกจากระบบ')
         self.IPlogout_Button.setFont(self.font)
         self.IPlogout_Button.clicked.connect(self.clicked_logout)
         self.input_gridLayout.addWidget(self.IPlogout_Button, 0, 1, 1, 1)
@@ -85,7 +85,7 @@ class Client_Window(QtWidgets.QMainWindow):
         #----------------------------------------------------------------
 
         #Code
-        self.Code_Label = QtWidgets.QLabel('Code : ')
+        self.Code_Label = QtWidgets.QLabel('โค้ด : ')
         self.Code_Label.setFont(self.font)
         self.input_gridLayout.addWidget(self.Code_Label, 1, 0, 1, 1)
 
@@ -98,7 +98,7 @@ class Client_Window(QtWidgets.QMainWindow):
         #----------------------------------------------------------------
 
         #Quantity
-        self.Quantity_Label = QtWidgets.QLabel('Quantity : ')
+        self.Quantity_Label = QtWidgets.QLabel('จำนวน : ')
         self.Quantity_Label.setFont(self.font)
         self.input_gridLayout.addWidget(self.Quantity_Label, 2, 0, 1, 1)
 
@@ -111,7 +111,7 @@ class Client_Window(QtWidgets.QMainWindow):
         #----------------------------------------------------------------
 
         #Enter
-        self.Enter_Button = QtWidgets.QPushButton('Enter')
+        self.Enter_Button = QtWidgets.QPushButton('ต่อไป')
         self.Enter_Button.clicked.connect(self.clicked_enter)
         self.Enter_Button.setFont(self.font)
         self.input_gridLayout.addWidget(self.Enter_Button, 3, 0, 1, 2)
@@ -256,7 +256,7 @@ class Client_Window(QtWidgets.QMainWindow):
             for m, item in enumerate(self.input_info[key]):
                 newitem = QtWidgets.QTableWidgetItem(item)
                 self.show_input_info.setItem(m, n, newitem)
-            self.show_input_info.setHorizontalHeaderLabels(Header)
+            self.show_input_info.setHorizontalHeaderLabels(['โค้ด', 'ชื่อ', 'ราคาต่อชิ้น', 'จำนวน','ของในระบบ', 'ราคารวม'])
 
 
 if __name__ == "__main__":

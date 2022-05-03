@@ -21,7 +21,7 @@ class FinalWindow(QtWidgets.QMainWindow):
         self.main_gridLayout = QtWidgets.QGridLayout(self.gridLayoutWidget)
 
         #All sum
-        self.Allsum_Label = QtWidgets.QLabel('All sum : ')
+        self.Allsum_Label = QtWidgets.QLabel('ราคารวม : ')
         self.Allsum_Label.setFont(self.font)
         self.main_gridLayout.addWidget(self.Allsum_Label, 0, 0, 1, 1)
 
@@ -32,7 +32,7 @@ class FinalWindow(QtWidgets.QMainWindow):
         #----------------------------------------------------------------
 
         #Cash
-        self.Cash_Label = QtWidgets.QLabel('Cash : ')
+        self.Cash_Label = QtWidgets.QLabel('เงิน : ')
         self.Cash_Label.setFont(self.font)
         self.main_gridLayout.addWidget(self.Cash_Label, 1, 0, 1, 1)
 
@@ -43,7 +43,7 @@ class FinalWindow(QtWidgets.QMainWindow):
         #----------------------------------------------------------------
 
         #Change
-        self.Change_Label = QtWidgets.QLabel('Change : ')
+        self.Change_Label = QtWidgets.QLabel('เงินทอน : ')
         self.Change_Label.setFont(self.font)
         self.main_gridLayout.addWidget(self.Change_Label, 2, 0, 1, 1)
 
@@ -54,7 +54,7 @@ class FinalWindow(QtWidgets.QMainWindow):
         #---------------------------------------------
 
         #Finish
-        self.Finish_Button = QtWidgets.QPushButton('Finish')
+        self.Finish_Button = QtWidgets.QPushButton('เสร็จสิ้น')
         self.Finish_Button.setFont(self.font)
         self.Finish_Button.clicked.connect(self.clicked_finish)
         self.main_gridLayout.addWidget(self.Finish_Button, 3, 1, 1, 1)
