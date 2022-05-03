@@ -2,7 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import threading,time
 
 from client import send,start
-from database_sup_window import FinalWindow
+from sup_window import FinalWindow
 
 class Client_Window(QtWidgets.QMainWindow):
     def __init__(self):
@@ -215,16 +215,17 @@ class Client_Window(QtWidgets.QMainWindow):
                     #wait for server to give output
                     time.sleep(0.1)
                 
-                if len(out_data[0]) != 1:                   
-                    self.input_info['Name'].append(out_data[0]['Name'])
-                    self.input_info['Cost/unit'].append(out_data[0]['Cost'])
-                    self.input_info['Sell price/unit'].append(out_data[0]['Sellprice'])
-                    self.input_info['Quantity'].append('1')
-                    self.input_info['Code'].append(code_input)
-                    self.input_info['Sell price'].append(out_data[0]['Sellprice'])
-                    self.input_info['Cost'].append(out_data[0]['Cost'])
-                    self.input_info['Stock'].append(out_data[0]['Stock'])
-                    self.setdatain_show_input_info()
+                if len(out_data[0]) != 1:  
+                    if int(out_data[0]['Stock']) > 0:
+                        self.input_info['Name'].append(out_data[0]['Name'])
+                        self.input_info['Cost/unit'].append(out_data[0]['Cost'])
+                        self.input_info['Sell price/unit'].append(out_data[0]['Sellprice'])
+                        self.input_info['Quantity'].append('1')
+                        self.input_info['Code'].append(code_input)
+                        self.input_info['Sell price'].append(out_data[0]['Sellprice'])
+                        self.input_info['Cost'].append(out_data[0]['Cost'])
+                        self.input_info['Stock'].append(out_data[0]['Stock'])
+                        self.setdatain_show_input_info()
 
             elif code_input in self.input_info['Code']:
                 #scan already exit code will auto add 1 quantity to code in table

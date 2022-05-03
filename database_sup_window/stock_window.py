@@ -15,19 +15,31 @@ class StockWindow(QtWidgets.QMainWindow):
         self.setupUi()
 
     def setupinfo(self):
+        css = pd.read_csv('database/Cost_Sellprice_Stock.csv', dtype=str)
         self.input_info['Name'] = []
         self.input_info['Supplier'] = []
-        self.input_info.update(pd.read_csv('database/Cost_Sellprice_Stock.csv', dtype=str).to_dict('list'))
+        self.input_info.update(css.to_dict('list'))
         restock_file = pd.read_csv('database/Restock_Alert.csv', dtype=str)
         self.input_info['Minimum'] = []
+        self.input_info['Status'] = []
+
         for c in self.input_info['Code']:
             nsd = get_nsd_from_code(c)
             self.input_info['Name'].append(nsd[0])
             self.input_info['Supplier'].append(nsd[1])
+            row = css[css['Code'] == c].index[0]
+            quantity = css['Stock'][row]
 
             row = restock_file[restock_file['Code'] == c].index[0]
             min = restock_file['Minimum'][row]
             self.input_info['Minimum'].append(min)
+            if quantity >= min:
+                status = 'ยังไม่หมด'
+            elif quantity < min and restock_file['Alert'][row] == '0':
+                status = 'ยังไม่สั่ง'
+            elif quantity < min and restock_file['Alert'][row] == '1':
+                status = 'สั่งเเล้ว'
+            self.input_info['Status'].append(status)
 
         self.filter_dict = self.input_info.copy()
 
@@ -126,13 +138,21 @@ class StockWindow(QtWidgets.QMainWindow):
 
 
     def setdatain_show_input_info(self):
-        self.show_input_info.setColumnCount(7)
+        self.show_input_info.setColumnCount(8)
         self.show_input_info.setRowCount(len(self.filter_dict['Code']))
-        Header = ['Name','Supplier','Code','Cost','Sell price','Stock','Minimum']
+        Header = ['Name','Supplier','Code','Cost','Sell price','Stock','Minimum','Status']
         for n,key in enumerate(self.filter_dict.keys()):
             for m, item in enumerate(self.filter_dict[key]):
                 newitem = QtWidgets.QTableWidgetItem(item)
                 self.show_input_info.setItem(m, n, newitem)
+
+                if key == 'Status':
+                    if item == 'ยังไม่หมด':
+                        self.show_input_info.item(m,n).setBackground(QtGui.QColor(185,255,185))
+                    elif item == 'ยังไม่สั่ง':
+                        self.show_input_info.item(m,n).setBackground(QtGui.QColor(255,145,145))
+                    elif item == 'สั่งเเล้ว':
+                        self.show_input_info.item(m,n).setBackground(QtGui.QColor(255,242,145))
             self.show_input_info.setHorizontalHeaderLabels(Header)
 
     def EditWindow(self):
@@ -222,12 +242,24 @@ class Edit_Window(QtWidgets.QMainWindow):
         self.main_gridLayout.addWidget(self.Minimum_LineEdit,5,1,1,1)
         #---------------------------------------------------------------
 
+        #status
+        self.Status_Label = QtWidgets.QLabel('Status : ')
+        self.Status_Label.setFont(self.font)
+        self.main_gridLayout.addWidget(self.Status_Label,6,0,1,1)
+
+        self.Status_LineEdit = QtWidgets.QComboBox()
+        self.Status_LineEdit.addItems(['สั่งเเล้ว','ยังไม่สั่ง','ยังไม่หมด'])
+        self.Status_LineEdit.setCurrentText(edit_list[7])
+        self.Status_LineEdit.setFont(self.font)
+        self.main_gridLayout.addWidget(self.Status_LineEdit,6,1,1,1)
+        #---------------------------------------------------------------
+
         #apply
         self.Apply_Button = QtWidgets.QPushButton('Apply')
         self.Apply_Button.setFont(self.font)
         self.Apply_Button.clicked.connect(self.clicked_apply)
         self.Apply_Button.setFixedHeight(30)
-        self.main_gridLayout.addWidget(self.Apply_Button,6,1,1,1)
+        self.main_gridLayout.addWidget(self.Apply_Button,7,1,1,1)
         #---------------------------------------------------------------
 
     def clicked_apply(self):
@@ -235,6 +267,11 @@ class Edit_Window(QtWidgets.QMainWindow):
         Sellprice = self.Sellprice_LineEdit.text()
         Stock = self.Stock_LineEdit.text()
         Minimum = self.Minimum_LineEdit.text()
+        Status = self.Status_LineEdit.currentText()
+        if Status == 'สั่งเเล้ว':
+            Status = '1'
+        elif Status in ['ยังไม่สั่ง','ยังไม่หมด']:
+            Status = '0'
         css = pd.read_csv('database/Cost_Sellprice_Stock.csv', dtype=str)
         ra = pd.read_csv('database/Restock_Alert.csv', dtype=str)
 
@@ -243,7 +280,7 @@ class Edit_Window(QtWidgets.QMainWindow):
             css.loc[row] = [edit_list[2],Cost,Sellprice,Stock]
 
             row = ra.query(f'Code == "{edit_list[2]}"').index
-            ra.loc[row] = [edit_list[2],Minimum]
+            ra.loc[row] = [edit_list[2],Minimum,Status]
 
             css.to_csv('database/Cost_Sellprice_Stock.csv', index=False,encoding='utf-8')
             ra.to_csv('database/Restock_Alert.csv', index=False,encoding='utf-8')
@@ -251,4 +288,3 @@ class Edit_Window(QtWidgets.QMainWindow):
 
         mainwindow.setupUi()
         self.close()
-
