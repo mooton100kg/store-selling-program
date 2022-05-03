@@ -4,7 +4,7 @@ from datetime import date
 def update_stock_from_code(Code : list, Quantity : list):
     #update already sell item in stock
     css = pd.read_csv('database/Cost_Sellprice_Stock.csv', dtype = str)
-    ra = pd.read_csv('database/Restock_Alert.csv', dtype=str)
+
     for c,q in zip(Code,Quantity):
         row = int(css[css['Code'] == c[:-4]].index[0])
         old_stock = int(css['Stock'][row])
@@ -12,8 +12,6 @@ def update_stock_from_code(Code : list, Quantity : list):
         cost = css['Cost'][row]
         sellprice = css['Sellprice'][row]
         css.loc[row] = [c[:-4], cost, sellprice, quantity]
-
-
 
     css.to_csv('database/Cost_Sellprice_Stock.csv', index=False, encoding='utf-8')
 
@@ -74,9 +72,13 @@ def save_css_from_code(code : str, cost : int, sellprice : int, quantity : int):
         row = css[css['Code'] == code[:-4]].index[0]
         old_stock = int(css['Stock'][row])
         css.loc[row] = [code[:-4], cost, sellprice, old_stock + quantity]
+
+        row = ra[ra['Code'] == code[:-4]].index[0]
+        old_min = ra['Minimum'][row]
+        ra.loc[row] = [code[:-4], old_min,'0'] 
     elif code[:-4] not in css['Code'].to_list():
         css.loc[len(css['Code'])] = [code[:-4], cost, sellprice, quantity] 
-        ra.loc[len(ra['Minimum'])] = [code[:-4], '1'] 
+        ra.loc[len(ra['Minimum'])] = [code[:-4], '1','0'] 
         
     css.to_csv('database/Cost_Sellprice_Stock.csv', index=False, encoding='utf-8')
     ra.to_csv('database/Restock_Alert.csv', index=False, encoding='utf-8')

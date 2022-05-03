@@ -1,5 +1,5 @@
 import sys
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtGui, QtWidgets
 import pandas as pd
 
 class AlertWindow(QtWidgets.QMainWindow):
@@ -18,8 +18,8 @@ class AlertWindow(QtWidgets.QMainWindow):
 
         #alert list
         self.Alert_Table = QtWidgets.QTableWidget()
-        self.Alert_Table.setColumnCount(4)
-        self.Alert_Table.setHorizontalHeaderLabels(['Code','Quantity','Check'])
+        self.clicked_checkstock()
+        self.Alert_Table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         self.gridLayout.addWidget(self.Alert_Table,0,0,1,1)
 
         #check stock
@@ -28,26 +28,53 @@ class AlertWindow(QtWidgets.QMainWindow):
         self.Checkstock_Button.clicked.connect(self.clicked_checkstock)
         self.gridLayout.addWidget(self.Checkstock_Button,1,0,1,1) 
 
+
     def clicked_checkstock(self):
-        css = pd.read_csv('database/Cost_Sellprice_Stock.csv',dtype=str)
-        ra = pd.read_csv('database/Restock_Alert.csv', dtype=str)
-        for r,c in enumerate(list(css['Code'])):
-            print(r,c)
+        self.css = pd.read_csv('database/Cost_Sellprice_Stock.csv',dtype=str)
+        self.ra = pd.read_csv('database/Restock_Alert.csv', dtype=str)
+        self.table_info = {'Code':[],'Quantity':[],'Minimum':[],'Archive':[]}
 
-    def change(self,code,quantity):
-        self.Alert_Table.setRowCount(self.Alert_Table.rowCount()+1)
+        for row_css,c in enumerate(list(self.css['Code'])):
+            quantity = int(self.css['Stock'][row_css])
+            row_ra = self.ra[self.ra['Code'] == c].index[0]
+            min = int(self.ra['Minimum'][row_ra])
+            alert = self.ra['Alert'][row_ra]
 
-        c = QtWidgets.QTableWidgetItem(code)
-        self.Alert_Table.setItem(self.Alert_Table.rowCount()-1,0,c)
+            if quantity < min and alert != '1':
+                self.table_info['Code'].append(c)
+                self.table_info['Quantity'].append(str(quantity))
+                self.table_info['Minimum'].append(str(min))
 
-        q = QtWidgets.QTableWidgetItem(quantity)
-        self.Alert_Table.setItem(self.Alert_Table.rowCount()-1,1,q)
+                self.Archive_Button = QtWidgets.QPushButton('Archive')
+                self.Archive_Button.clicked.connect(self.handleButtonClicked)
+                self.table_info['Archive'].append(self.Archive_Button)
+        self.setdatain_table()
 
-        self.Archive_Button = QtWidgets.QPushButton('Archive')
-        self.Alert_Table.setCellWidget(self.Alert_Table.rowCount()-1,2,self.Archive_Button)
+    def setdatain_table(self):
+        self.Alert_Table.setColumnCount(4)
+        self.Alert_Table.setRowCount(len(self.table_info['Code']))
+        Header = ['Code','Quantity','Minimum','Archive']
+        for n,key in enumerate(Header):
+            for m, item in enumerate(self.table_info[key]):
+                if key != 'Archive':
+                    newitem = QtWidgets.QTableWidgetItem(item)
+                    self.Alert_Table.setItem(m, n, newitem)
+                elif key == 'Archive':
+                    self.Alert_Table.setCellWidget(m,n,item)
+            self.Alert_Table.setHorizontalHeaderLabels(Header)
 
+    def handleButtonClicked(self):
+        button = QtWidgets.qApp.focusWidget()
+        button.setEnabled(False)
+        index = self.Alert_Table.indexAt(button.pos())
+        if index.isValid():
+            code = self.Alert_Table.item(index.row(),0).text()
+            min = self.Alert_Table.item(index.row(),2).text()
+            row_ra = self.ra[self.ra['Code'] == code].index[0]
 
-app = QtWidgets.QApplication([])
-window = AlertWindow()
-window.show()
-sys.exit(app.exec_())
+            self.ra.loc[row_ra] = [code, min,'1'] 
+            self.ra.to_csv('database/Restock_Alert.csv', index=False, encoding='utf-8')
+
+            for c in range(self.Alert_Table.columnCount()-1):
+                self.Alert_Table.item(index.row(),c).setBackground(QtGui.QColor(111,111,111))
+            
