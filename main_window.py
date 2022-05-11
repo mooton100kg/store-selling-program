@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from datetime import datetime
 
-from main_sup_window import DatabaseWindow,RestockWindow,ServerWindow,SupplierbillWindow
-from main_sup_window.alert_window import AlertWindow
+from main_sup_window import DatabaseWindow,RestockWindow,ServerWindow,SupplierbillWindow,AlertWindow,SaveLoadWindow
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -10,6 +10,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.font = QtGui.QFont()
         self.font.setPointSize(24)
         self.setWindowTitle('Main Window')
+        if int(datetime.now().strftime('%d'))%5 == 0:
+            print('1')
+        else:
+            print('2')
         self.setupUi()
 
     def openWindow(self, NameOpenWindow):
@@ -60,12 +64,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.gridLayout.addWidget(self.Quickcheck_Button,4,0,1,1)
         #------------------------------------------------------------
 
+        #ssave/load
+        self.Saveload_Button = QtWidgets.QPushButton(self.gridLayoutWidget, clicked = lambda : self.openWindow(SaveLoadWindow))
+        self.Saveload_Button.setFont(self.font)
+        self.Saveload_Button.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        self.Saveload_Button.setText('Save/Load')
+        self.gridLayout.addWidget(self.Saveload_Button,5,0,1,1)
+        #------------------------------------------------------------
+
         self.version_label = QtWidgets.QLabel(self.gridLayoutWidget)
         self.version_label.setAlignment(QtCore.Qt.AlignRight)
         self.font.setPointSize(16)
         self.version_label.setFont(self.font)
         self.version_label.setText('version : 2.0')
-        self.gridLayout.addWidget(self.version_label,5,0,1,1)
+        self.gridLayout.addWidget(self.version_label,6,0,1,1)
 
 
 
